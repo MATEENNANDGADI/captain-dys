@@ -59,7 +59,7 @@ The highlighting logic is powered by a custom Regular Expression engine located 
 ## Author
 
 * **Abdul Mateen Nandgadi**
-* *Engineering Final Year Project*
+* *Engineering 3rs semester DSA project*
 
 ## License
 
