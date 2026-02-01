@@ -63,7 +63,7 @@ The highlighting logic is powered by a custom Regular Expression engine located 
 
 ## License
 
-See the [LICENSE](https://www.google.com/search?q=LICENSE) file.
+See the [LICENSE],, yet to be created file.
 
 ```
 
