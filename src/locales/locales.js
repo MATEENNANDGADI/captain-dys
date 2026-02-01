@@ -5,8 +5,9 @@ import enEN from './en-EN';
 const locales = {
     available: () => {
         return {
-            'fr-FR': frFR,
             'en-EN': enEN,
+            'fr-FR': frFR,
+            
         };
     },
 
