@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,7 +18,6 @@
           url('OpenDyslexic-Regular.svg#opendyslexicregular') format('svg');
           font-display: swap;
       }
-
   </style>
 
   <style type="text/css">
@@ -91,38 +90,48 @@
               height: 5em;
           }
       }
-
   </style>
 </head>
 <body>
 
-<!-- start: loader -->
-<div class="loader">Chargement...</div>
-<!-- end: loader -->
-
-<!-- start: container for detecting clicks outside the sidebar -->
+<div class="loader">Loading...</div>
 <div id="sidebar-outer" class="loading-hide sidebar-outer"></div>
-<!-- end: container for detecting clicks outside the sidebar -->
-
-<!-- start: sidebar -->
 <div id="sidebar" class="loading-hide sidebar">
   <div class="sidebar-content">
     <nav>
 
-      <!-- start: click for upload -->
       <span class="sidebar-btn btn-editor-upload">
         <span class="photo-visible">
           <svg xmlns="http://www.w3.org/2000/svg"  width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M3 4V1H5V4H8V6H5V9H3V6H0V4M6 10V7H9V4H16L17.8 6H21C22.1 6 23 6.9 23 8V20C23 21.1 22.1 22 21 22H5C3.9 22 3 21.1 3 20V10M13 19C17.45 19 19.69 13.62 16.54 10.46C13.39 7.31 8 9.55 8 14C8 16.76 10.24 19 13 19M9.8 14C9.8 16.85 13.25 18.28 15.26 16.26C17.28 14.25 15.85 10.8 13 10.8C11.24 10.8 9.8 12.24 9.8 14Z" /></svg>
-          <span data-label="upload"><!-- upload --></span>
+          <span data-label="upload"></span>
         </span>
         <input type="file" accept="image/*" capture="camera"  class="photo-file" id="photo" />
       </span>
-      <!-- end: click for upload -->
-
-      <!-- start: speech to text -->
+      <a class="sidebar-btn btn-editor-new" id="btn-editor-new">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+            <path d="M0 0h24v24H0z" fill="none"/>
+            <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+        </svg>
+        <span data-label="new">New</span>
+      </a>
+      <a class="sidebar-btn btn-editor-open" id="btn-editor-open">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+            <path d="M0 0h24v24H0z" fill="none"/>
+            <path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/>
+        </svg>
+        <span data-label="open">Open</span>
+        <input type="file" id="file-opener" accept=".txt" style="display: none;" />
+      </a>
+      <a class="sidebar-btn btn-editor-save" id="btn-editor-save">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+            <path d="M0 0h24v24H0z" fill="none"/>
+            <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/>
+        </svg>
+        <span data-label="save">Save .txt</span>
+      </a>
       <a class="sidebar-btn btn-editor-listen" id="btn-editor-listen">
         <span id="logo-mic"></span>
-        <span data-label="speak"><!-- Speech to text --></span>
+        <span data-label="speak"></span>
         <template id="bi-mic-mute-fill">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-mic-mute-fill" viewBox="0 0 16 16">
             <path d="M13 8c0 .564-.094 1.107-.266 1.613l-.814-.814A4.02 4.02 0 0 0 12 8V7a.5.5 0 0 1 1 0v1zm-5 4c.818 0 1.578-.245 2.212-.667l.718.719a4.973 4.973 0 0 1-2.43.923V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 1 0v1a4 4 0 0 0 4 4zm3-9v4.879L5.158 2.037A3.001 3.001 0 0 1 11 3z"/>
@@ -136,80 +145,64 @@
           </svg>
         </template>
       </a>
-      <!-- end: speech to text -->
-
-      <!-- start: click for listen -->
       <a class="sidebar-btn btn-editor-speak">
         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" ><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
-        <span data-label="listen"><!-- Listen --></span>
+        <span data-label="listen"></span>
       </a>
-      <!-- end: click for listen -->
-
-      <!-- start: print document -->
       <a class="sidebar-btn btn-editor-print">
         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" ><path d="M0 0h24v24H0z" fill="none"/><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
-        <span data-label="print"><!-- Print --></span>
+        <span data-label="print"></span>
       </a>
-      <!-- end: print document -->
-
-      <!-- start: display colors -->
       <a class="sidebar-btn btn-editor-colors">
         <label for="toggle-colors" class="toggle">
-          <!-- toggle -->
           <div class="relative">
             <input checked="checked" type="checkbox" id="toggle-colors" class="chx-toggle-colors sr-only">
             <div class="toggle-line"></div>
             <div class="toggle-dot"></div>
           </div>
-          <!-- label -->
           <div class="toggle-label">
-            <span data-label="colors"><!-- Colors --></span>
+            <span data-label="colors"></span>
           </div>
         </label>
       </a>
-      <!-- end: display colors -->
-
-      <!-- start: spellcheck -->
       <a class="sidebar-btn btn-editor-spellcheck">
         <label for="toggle-spellcheck" class="toggle">
-          <!-- toggle -->
           <div class="relative">
             <input type="checkbox" id="toggle-spellcheck" class="chx-toggle-spellcheck sr-only">
             <div class="toggle-line"></div>
             <div class="toggle-dot"></div>
           </div>
-          <!-- label -->
           <div class="toggle-label">
-            <span data-label="spelling"><!-- Spellcheck --></span>
+            <span data-label="spelling"></span>
           </div>
         </label>
       </a>
-      <!-- end: spellcheck -->
-
-      <!-- start: locale -->
+      <a class="sidebar-btn btn-editor-suggestions">
+        <label for="toggle-suggestions" class="toggle">
+          <div class="relative">
+            <input checked="checked" type="checkbox" id="toggle-suggestions" class="chx-toggle-suggestions sr-only">
+            <div class="toggle-line"></div>
+            <div class="toggle-dot"></div>
+          </div>
+          <div class="toggle-label">
+            <span data-label="suggestions">AI Suggestions</span>
+          </div>
+        </label>
+      </a>
       <div class="sidebar-locale">
         <select class="locale-select" data-role="locale-select">
         </select>
       </div>
-      <!-- end: locale -->
-
-
-      <!-- start: github -->
       <div class="sidebar-contribute">
-        <a href="https://github.com/MATEENNANDGADI"><span data-label="contribute"><!-- Contribute --></span></a>
+        <a href="https://github.com/MATEENNANDGADI"><span data-label="contribute"></span></a>
       </div>
-      <!-- end: github -->
-    </nav>
+      </nav>
   </div>
 </div>
-<!-- end: sidebar -->
-
 <div class="page">
 
-  <!-- start: header bar -->
   <header class="loading-hide header">
 
-    <!-- start: burger menu for mobile -->
     <div class="burger-link">
       <a>
         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
@@ -218,23 +211,13 @@
         </svg>
       </a>
     </div>
-    <!-- end: burger menu for mobile -->
-
-    <!-- start: logo -->
     <div class="logo" data-role="logo">
       <img src="images/logo.png" height="64" width="64" alt="logo">
       <div class="logo-text">
-        <div class="logo-text">
-          DxEditor
-        </div>
+        DxEditor
       </div>
     </div>
-    <!-- end: logo -->
-
-  </header>
-  <!-- end: header bar -->
-
-  <!-- start: quill toolbar. Here only for preloading -->
+    </header>
   <div class="loading-hide toolbar" id="toolbar-container">
     <div class="toolbar-inner">
       <ul class="toolbar-buttons">
@@ -250,30 +233,17 @@
       </ul>
     </div>
   </div>
-  <!-- end: quill toolbar. Here only for preloading -->
-
-  <!-- start: hidden container for speech2text -->
   <div id="interim_transcript" class="interim-transcript" style="display: none"></div>
-  <!-- end: hidden container for speech2text -->
-
-  <!-- start: Editor -->
   <div id="editor" class="loading-hide editor"></div>
-  <!-- end: Editor -->
-
-  <!-- start progressbar -->
-    <div class="loading-hide" id="progressbar">
+  <div class="loading-hide" id="progressbar">
       <div class="progress" id="progress"></div>
     </div>
     </div>
-  <!-- end progressbar -->
-
-  <!-- start: image for cropping -->
   <div id="image-container">
     <button id="crop-confirm" class="btn primary" data-label="crop">Crop</button>
     <button id="crop-cancel" class="btn" data-label="cancel">Cancel</button>
     <img id="image" alt="" />
   </div>
-  <!-- end: image for cropping -->
-</div>
+  </div>
 </body>
 </html>

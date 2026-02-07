@@ -1,12 +1,13 @@
-import frFR from './fr-FR';
+
 import enEN from './en-EN';
+
 
 
 const locales = {
     available: () => {
         return {
             'en-EN': enEN,
-            'fr-FR': frFR,
+           
             
         };
     },
@@ -20,7 +21,7 @@ const locales = {
     },
 
     default: () => {
-        return 'fr-FR';
+        return 'en-EN';
     }
 
 }
