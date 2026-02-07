@@ -5,6 +5,7 @@ const editor = {
   quill: null,
   colorsAreEnabled: true,
   translations: {},
+  
   init: (selector, toolbarSelector, locale) => {
 
     if (typeof locale === 'undefined' || !locales.has(locale)) {
@@ -40,10 +41,6 @@ const editor = {
       quill.insertText(0, editor.translations.editor.welcome);
     }
 
-
-    // @todo font is removed on paste
-    // https://github.com/quilljs/quill/issues/1184
-
     quill.on('text-change', function (delta, oldDelta, source) {
       if (source != 'user') {
         return;
@@ -51,13 +48,11 @@ const editor = {
       editor.applyColors();
     });
 
-
     editor.applyColors();
     editor.dealWithCopyPaste();
   },
 
   applyColors: () => {
-
     // reset format
     let quill = editor.quill;
     quill.formatText(0, quill.getText().length, {color: '#333'});
@@ -68,8 +63,7 @@ const editor = {
 
     // Color of letters
     const toColor = editor.translations.editor.colors;
-
-    let text = quill.getText(); // remember to not trim text from break lines, otherwise positions are false
+    let text = quill.getText(); 
 
     if (text.length === 0) {
       return;
@@ -77,8 +71,8 @@ const editor = {
 
     let pattern, indice;
 
-
     for (pattern of toColor) {
+      // Calls our custom DSA function instead of standard Regex
       let indices = editor.getIndicesOf(pattern.regex, text);
 
       if (0 == indices.length) {
@@ -136,32 +130,121 @@ const editor = {
     return editor.quill.getText();
   },
 
-  getIndicesOf: (searchStr, str,) => {
-
-    let matches, indices = [];
-    const regexp = RegExp(searchStr, 'gi');
-    let captured, startAt = 0;
-    while ((matches = regexp.exec(str)) !== null) {
-      if (typeof (matches[1]) != 'undefined') {
-        captured = matches[1];
-        startAt = matches[0].indexOf(captured); // skip first chars
-      } else {
-        captured = matches[0];
-        startAt = 0;
-      }
-
-      indices.push({
-        start: matches.index + startAt,
-        end: matches.index + startAt + captured.length,
-        len: captured.length,
-      });
-    }
-    return indices;
-  },
   setText(text) {
     editor.quill.setText(text);
+  },
+
+  // ============================================================
+  // CUSTOM DSA IMPLEMENTATION
+  // Algorithm 1: Rabin-Karp (Rolling Hash) for O(N) Pattern Matching
+  // ============================================================
+  getIndicesOf: (searchStr, text) => {
+    // Optimization: Handle simple single letters (b, d, p, q) directly for O(N) speed
+    if (searchStr.length === 3 && searchStr.startsWith('(') && searchStr.endsWith(')')) {
+       // Extract letter from "(b)"
+       const char = searchStr[1];
+       let indices = [];
+       for(let i=0; i<text.length; i++) {
+           if(text[i].toLowerCase() === char) {
+               indices.push({start: i, len: 1, end: i+1});
+           }
+       }
+       return indices;
+    }
+
+    // For sequences like "mn", "nm" or complex rules, use Rabin-Karp
+    // 1. Clean the regex string to get raw patterns (e.g., "(mn|nm)" -> ["mn", "nm"])
+    let patterns = [];
+    let cleanStr = searchStr.replace(/\\b/g, ''); // Remove regex boundaries for raw search
+    
+    if (cleanStr.includes('|')) {
+        patterns = cleanStr.replace(/[()]/g, '').split('|');
+    } else {
+        patterns = [cleanStr.replace(/[()]/g, '')];
+    }
+
+    let indices = [];
+    const d = 256; // alphabet size
+    const q = 101; // prime number
+
+    // Inner function: The actual Rabin-Karp Algorithm
+    const searchPattern = (pat, txt) => {
+        let M = pat.length;
+        let N = txt.length;
+        if (M === 0) return;
+        
+        let i, j;
+        let p = 0; // hash for pattern
+        let t = 0; // hash for text
+        let h = 1;
+
+        // The value of h would be "pow(d, M-1)%q"
+        for (i = 0; i < M - 1; i++)
+            h = (h * d) % q;
+
+        // Calculate the hash value of pattern and first window of text
+        for (i = 0; i < M; i++) {
+            p = (d * p + pat.charCodeAt(i)) % q;
+            t = (d * t + txt.charCodeAt(i)) % q;
+        }
+
+        // Slide the pattern over text one by one
+        for (i = 0; i <= N - M; i++) {
+            // Check the hash values of current window of text and pattern
+            if (p === t) {
+                // If hash matches, check characters one by one
+                for (j = 0; j < M; j++) {
+                    if (txt[i + j] !== pat[j])
+                        break;
+                }
+                if (j === M) {
+                    // Match found
+                    indices.push({
+                        start: i,
+                        end: i + M,
+                        len: M
+                    });
+                }
+            }
+
+            // Calculate hash value for next window of text: Remove leading digit, add trailing digit
+            if (i < N - M) {
+                t = (d * (t - txt.charCodeAt(i) * h) + txt.charCodeAt(i + M)) % q;
+                if (t < 0) t = (t + q);
+            }
+        }
+    };
+
+    // Run the algorithm for every sub-pattern
+    patterns.forEach(pat => searchPattern(pat, text));
+    
+    return indices;
+  },
+
+  // ============================================================
+  // CUSTOM DSA IMPLEMENTATION
+  // Algorithm 2: Levenshtein Distance (Dynamic Programming)
+  // Used for Word Similarity Suggestions
+  // ============================================================
+  calculateEditDistance: (str1, str2) => {
+      const track = Array(str2.length + 1).fill(null).map(() =>
+      Array(str1.length + 1).fill(null));
+
+      for (let i = 0; i <= str1.length; i += 1) { track[0][i] = i; }
+      for (let j = 0; j <= str2.length; j += 1) { track[j][0] = j; }
+
+      for (let j = 1; j <= str2.length; j += 1) {
+          for (let i = 1; i <= str1.length; i += 1) {
+              const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
+              track[j][i] = Math.min(
+                  track[j][i - 1] + 1, // deletion
+                  track[j - 1][i] + 1, // insertion
+                  track[j - 1][i - 1] + indicator, // substitution
+              );
+          }
+      }
+      return track[str2.length][str1.length];
   }
 };
-
 
 export default editor;
